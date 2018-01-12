@@ -15,7 +15,11 @@ User.prototype.getAllToDo = function(){
 }
 
 User.prototype.addToDo = function (todo) {
-  this.toDoList.push(todo);
+  this.toDoList.push({title:todo.title,description:todo.description,items:todo});
+};
+
+User.prototype.getToDo = function (title) {
+  return this.toDoList.find((t)=>t.title== title);
 };
 
 module.exports = User;

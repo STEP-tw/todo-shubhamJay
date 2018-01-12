@@ -1,6 +1,7 @@
 const Webapp = require('./webapp.js');
 const fs = require('fs');
 const ToDoApp = require('./todoApp.js');
+const toDoTemplet = fs.readFileSync("./public/toDoTemplet.html","utf8");
 
 const getContentType = function(path){
   let fileExt = path.split(".").slice(-1)[0];
@@ -63,21 +64,21 @@ const handleLogOut = function(req,res){
 }
 
 const getUserInReq = function(req,res){
-  debugger;
+  ;
   let sessionId = req.cookies.sessionId;
   let user = this.getUserBySessionId(sessionId)
   if(sessionId && user)req.user = user;
 };
 
 const serveToDoList = function(req,res){
-  debugger;
+  ;
   let userToDos = req.user.getAllToDo();
   res.write(JSON.stringify(userToDos));
   res.end();
 }
 
 const handleNewToDo = function(req,res){
-  debugger;
+  ;
   let toDo = req.body;
   this.addToDo(req.cookies.sessionId,toDo);
   res.redirect('/homePage.html');
@@ -86,6 +87,29 @@ const handleNewToDo = function(req,res){
 const handleUserWithOutLogIn = function(req,res){
   if(req.urlIsOneOf(["/homePage.html","/createNewToDo.html"]) && !req.user){
     res.redirect('./index.html');
+  }
+}
+
+const getToDoDataShow = function(templet,data){
+  let toDoWithTitle = templet.replace('TODOTITLE',`<b>title : </b> ${data.title}`);
+  let toDoWithdescription = toDoWithTitle.replace("description",
+    `<b>description : </b>${data.description}`);
+  let todoWithItems = toDoWithdescription.replace("TODODATA",`<b>items</b>${JSON.stringify(data.items)}`)
+  return todoWithItems;
+}
+
+const serveToDo = function(req,res){
+  debugger;
+  if (req.user.userId && req.user.sessionId) {
+    let allToDosOfUser = req.user.getAllToDo();
+    let requiredToDo = req.url.substr(1);
+    if(req.user && allToDosOfUser.includes(requiredToDo)){
+      let todoData = req.user.getToDo(requiredToDo);
+      res.statusCode =200;
+      res.setHeader('content-type',"text/html");
+      res.write(getToDoDataShow(toDoTemplet,todoData));
+      res.end();
+    }
   }
 }
 
@@ -98,6 +122,7 @@ let app = Webapp.create();
 app.preUse(getUserInReq.bind(todoApp));
 app.preUse(handleUserWithOutLogIn);
 app.preUse(serveSlash);
+app.preUse(serveToDo);
 app.get("/logOut",handleLogOut);
 app.get('/getAllToDo',serveToDoList);
 app.post('/logIn',handleLogIn.bind(todoApp));

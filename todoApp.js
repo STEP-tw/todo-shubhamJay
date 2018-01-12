@@ -30,7 +30,7 @@ ToDoApp.prototype.addToDo = function (sessionId,newToDo) {
 };
 
 ToDoApp.prototype.storeData = function () {
-  fs.writeFile("./data/toDo.json",JSON.stringify(this.allUsers),(err)=>{
+  fs.writeFile("./data/toDo.json",JSON.stringify(this.allUsers)|| [],(err)=>{
     if(err)console.log(err);
   })
 };
