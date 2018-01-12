@@ -39,7 +39,6 @@ ToDoApp.prototype.loadData = function () {
   fs.readFile("./data/toDo.json",(err,data)=>{
     if(err)console.log(err);
     if(data){
-      console.log(data.toString());
       let toDos = JSON.parse(data.toString());
       this.allUsers = this.allUsers.concat(toDos);
     }

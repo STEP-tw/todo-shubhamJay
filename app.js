@@ -83,12 +83,20 @@ const handleNewToDo = function(req,res){
   res.redirect('/homePage.html');
 }
 
+const handleUserWithOutLogIn = function(req,res){
+  if(req.urlIsOneOf(["/homePage.html","/createNewToDo.html"]) && !req.user){
+    res.redirect('./index.html');
+  }
+}
+
 
 let todoApp = new ToDoApp();
 todoApp.loadData();
 
 let app = Webapp.create();
+
 app.preUse(getUserInReq.bind(todoApp));
+app.preUse(handleUserWithOutLogIn);
 app.preUse(serveSlash);
 app.get("/logOut",handleLogOut);
 app.get('/getAllToDo',serveToDoList);
