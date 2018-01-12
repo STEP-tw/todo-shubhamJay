@@ -13,7 +13,7 @@ const getContentType = function(path){
   return contentTypes[fileExt];
 }
 
-const serveSlash = (req) =>{
+const serveSlash = (req,res) =>{
   if(req.url == "/"){
     req.url = '/index.html'
   }
@@ -41,26 +41,49 @@ const actionOnLogInFailed = function(res){
   res.redirect('/index.html');
 }
 
-const actionOnLogIn = function(res){
+const actionOnLogIn = function(req,res){
   let sessionId = new Date().getTime();
+  let user = this.getUser(req.body.userId);
+  user.addSessionId(sessionId);
   res.setHeader('Set-Cookie',`sessionId=${sessionId}`);
   res.redirect('/homePage.html');
 }
 
 const handleLogIn = function(req,res){
-  debugger;
   if (this.isValidUser(req.body.userId,req.body.password)) {
-    actionOnLogIn(res);
+    actionOnLogIn.call(this,req,res);
   } else {
     actionOnLogInFailed(res)
   }
 }
 
+const handleLogOut = function(req,res){
+  res.setHeader('Set-Cookie',`sessionId=0; Max-Age=-1`);
+  res.redirect('/index.html');
+}
+
+const getUserInReq = function(req,res){
+  debugger;
+  let sessionId = req.cookies.sessionId;
+  let user = this.getUserBySessionId(sessionId)
+  if(sessionId && user)req.user = user;
+};
+
+const serveToDoList = function(req,res){
+  debugger;
+  let userToDos = req.user.getAllToDo();
+  console.log(userToDos);
+  res.write(JSON.stringify(userToDos));
+  res.end();
+}
 
 let todoApp = new ToDoApp();
 let app = Webapp.create();
+app.preUse(getUserInReq.bind(todoApp));
 app.preUse(serveSlash);
-app.post('/logIn',handleLogIn.bind(todoApp))
+app.get("/logOut",handleLogOut);
+app.post('/logIn',handleLogIn.bind(todoApp));
+app.get('/getAllToDo',serveToDoList);
 app.postUse(serveStaticFiles);
 app.postUse(serveFileNotFound);
 
