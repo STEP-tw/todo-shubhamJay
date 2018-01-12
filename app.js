@@ -36,10 +36,24 @@ const serveStaticFiles = (req,res)=>{
   };
 }
 
+const actionOnLogInFailed = function(res){
+  res.setHeader('Set-Cookie',`logInFailed=1; Max-Age=5`);
+  res.redirect('/index.html');
+}
+
+const actionOnLogIn = function(res){
+  let sessionId = new Date().getTime();
+  res.setHeader('Set-Cookie',`sessionId=${sessionId}`);
+  res.redirect('/homePage.html');
+}
+
 const handleLogIn = function(req,res){
-  this.isValidUser(req.body.userId,req.body.password)
-  res.write("logIn successful");
-  res.end();
+  debugger;
+  if (this.isValidUser(req.body.userId,req.body.password)) {
+    actionOnLogIn(res);
+  } else {
+    actionOnLogInFailed(res)
+  }
 }
 
 
