@@ -11,7 +11,11 @@ const getContentType = function(path){
   return contentTypes[fileExt];
 }
 
-let app = Webapp.create();
+const serveSlash = (req) =>{
+  if(req.url == "/"){
+    req.url = '/index.html'
+  }
+}
 
 const serveFileNotFound = (req,res)=>{
   if(!res.finished){
@@ -30,6 +34,8 @@ const serveStaticFiles = (req,res)=>{
   };
 }
 
+let app = Webapp.create();
+app.preUse(serveSlash);
 app.postUse(serveStaticFiles);
 app.postUse(serveFileNotFound);
 
