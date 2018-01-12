@@ -10,5 +10,6 @@ form{
 }
 
 #logOut{
-  text-align: right;
+  margin: 50px;
+  float: right;
 }

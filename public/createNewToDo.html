@@ -3,16 +3,18 @@
   <head>
     <meta charset="utf-8">
     <title>create new To Do</title>
+    <link rel="stylesheet" href="/css/styles.css">
     <script type="text/javascript" src="/js/newToDo.js">
     </script>
   </head>
   <body>
     <h2>enter new To Do</h2>
-    <button id="addItem" onclick="getTextBox()">add Item</button><br><br>
+    <h3><a id="logOut" href="/logOut">Logout</a></h3>
     <form action="/newToDo" method="POST">
       title : <input type="text" name="title" ><br><br>
       discription : <textarea type="text" name="discription" ></textarea><br><br>
       <button type="submit" name="submit">submit To Do</button><br><br>
     </form>
+    <button id="addItem" onclick="getTextBox()">add Item</button><br><br>
   </body>
 </html>
