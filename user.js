@@ -14,4 +14,8 @@ User.prototype.getAllToDo = function(){
   return allToDoTiTles;
 }
 
+User.prototype.addToDo = function (todo) {
+  this.toDoList.push(todo);
+};
+
 module.exports = User;

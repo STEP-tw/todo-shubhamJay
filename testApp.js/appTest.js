@@ -61,7 +61,19 @@ describe('app', () => {
         body: 'userId=bad&password=user'
       }, res => {
         th.should_be_redirected_to(res, '/index.html');
-        th.should_have_expiring_cookie(res, 'logInFailed', '1');
+        th.should_have_expiring_cookie(res, 'logInFailed', '1',"5");
+        done();
+      })
+    })
+  })
+  describe('GET /logOut', () => {
+    it('delets cookies and redirects to index page', done => {
+      request(app, {
+        method: 'GET',
+        url: '/logOut',
+      }, res => {
+        th.should_be_redirected_to(res, '/index.html');
+        th.should_have_expiring_cookie(res,'sessionId',"0","-1");
         done();
       })
     })

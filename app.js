@@ -72,18 +72,26 @@ const getUserInReq = function(req,res){
 const serveToDoList = function(req,res){
   debugger;
   let userToDos = req.user.getAllToDo();
-  console.log(userToDos);
   res.write(JSON.stringify(userToDos));
   res.end();
 }
+
+const handleNewToDo = function(req,res){
+  debugger;
+  let toDo = req.body;
+  req.user.addToDo(toDo);
+  res.redirect('/homePage.html');
+}
+
 
 let todoApp = new ToDoApp();
 let app = Webapp.create();
 app.preUse(getUserInReq.bind(todoApp));
 app.preUse(serveSlash);
 app.get("/logOut",handleLogOut);
-app.post('/logIn',handleLogIn.bind(todoApp));
 app.get('/getAllToDo',serveToDoList);
+app.post('/logIn',handleLogIn.bind(todoApp));
+app.post('/newToDo',handleNewToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
 app.postUse(serveFileNotFound);
 
