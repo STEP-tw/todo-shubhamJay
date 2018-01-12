@@ -1,9 +1,9 @@
 let chai = require('chai');
 let assert = chai.assert;
-let request = require('./testFrameWork.js/requestSimulator.js');
+let request = require('./testFrameWork/requestSimulator.js');
 process.env.COMMENT_STORE = "./testStore.json";
 let app = require('../app.js');
-let th = require('./testFrameWork.js/testHelper.js');
+let th = require('./testFrameWork/testHelper.js');
 
 
 describe('app', () => {
