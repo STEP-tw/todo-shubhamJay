@@ -7,6 +7,7 @@ const getContentType = function(path){
     'js':"text/javascript",
     'html':'text/html',
     'img':'img/gif',
+    'css':'text/css',
   }
   return contentTypes[fileExt];
 }

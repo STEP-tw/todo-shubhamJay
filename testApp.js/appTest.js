@@ -15,15 +15,14 @@ describe('app',()=>{
       })
     })
   })
-  // describe('GET /',()=>{
-  //   it('redirects to index.html',done=>{
-  //     request(app,{method:'GET',url:'/'},(res)=>{
-  //       th.should_be_redirected_to(res,'/index.html');
-  //       assert.equal(res.body,"");
-  //       done();
-  //     })
-  //   })
-  // })
+  describe('GET /',()=>{
+    it('serves the index.html',done=>{
+      request(app,{method:'GET',url:'/'},(res)=>{
+        th.body_contains(res,"log In here")
+        done();
+      })
+    })
+  })
   // describe('GET /index.html',()=>{
   //   it('gives the index page',done=>{
   //     request(app,{method:'GET',url:'/index.html'},res=>{
