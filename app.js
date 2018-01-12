@@ -79,12 +79,14 @@ const serveToDoList = function(req,res){
 const handleNewToDo = function(req,res){
   debugger;
   let toDo = req.body;
-  req.user.addToDo(toDo);
+  this.addToDo(req.cookies.sessionId,toDo);
   res.redirect('/homePage.html');
 }
 
 
 let todoApp = new ToDoApp();
+todoApp.loadData();
+
 let app = Webapp.create();
 app.preUse(getUserInReq.bind(todoApp));
 app.preUse(serveSlash);
