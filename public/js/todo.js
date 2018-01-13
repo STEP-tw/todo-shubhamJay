@@ -28,12 +28,23 @@ const editDescription = function(){
 }
 
 const editItems = function(){
-  let 
+  let items = document.querySelector('body').querySelectorAll("li");
+  for (var i = 0; i < items.length; i++) {
+    let item = items[i];
+    let itemEditBox = document.createElement("textArea");
+    itemEditBox.value = item.innerText;
+    item.replaceChild(itemEditBox,item.childNodes[0]);
+  };
+}
 
+const hideEditOption = function(){
+  let editButton = document.getElementById('editButton');
+  editButton.className = "hide";
 }
 
 const getEditingOption = function(){
   editTitle();
   editDescription();
   editItems();
+  hideEditOption();
 }

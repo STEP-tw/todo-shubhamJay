@@ -70,7 +70,6 @@ let urlIsOneOf = function(urls) {
 }
 
 const main = function(req, res) {
-  // console.log(req.headers);
   console.log(`${req.method}   ${req.url}`);
   res.redirect = redirect.bind(res);
   req.urlIsOneOf = urlIsOneOf.bind(req);

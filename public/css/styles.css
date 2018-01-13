@@ -13,3 +13,7 @@ form{
   margin: 50px;
   float: right;
 }
+
+.hide{
+  visibility: hidden;
+}
