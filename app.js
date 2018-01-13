@@ -88,7 +88,7 @@ const handleUserWithOutLogIn = function(req,res){
 }
 
 const getToDoDataShow = function(templet,data){
-  let toDoWithTitle = templet.replace('TODOTITLE',`${data.title}`);
+  let toDoWithTitle = templet.replace(/TODOTITLE/g,`${data.title}`);
   let toDoWithdescription = toDoWithTitle.replace("DESCRIPTION",
     `${data.description}`);
   let todoWithItems = toDoWithdescription.replace("TODODATA",`${JSON.stringify(data.items)|| ""}`)
@@ -123,6 +123,14 @@ const sanitiseReqUrl = function(req,res){
   req.url = req.url.replace(/00/g,' ');
 }
 
+const handleDeletingToDo = function(req,res){
+  if(req.user && req.url.startsWith("/delete/")){
+    let requiredToDo = req.url.split("/").slice(-1)[0];
+    req.user.deleteToDo(requiredToDo);
+    res.redirect(`/homePage.html`);
+  }
+};
+
 let todoApp = new ToDoApp();
 // todoApp.loadData();
 
@@ -138,6 +146,7 @@ app.get('/getAllToDo',serveToDoTitles);
 app.post('/logIn',handleLogIn.bind(todoApp));
 app.post('/newToDo',handleNewToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
+app.postUse(handleDeletingToDo);
 app.postUse(hanldeEditedToDo)
 app.postUse(serveFileNotFound);
 

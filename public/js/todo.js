@@ -11,6 +11,12 @@ const showItems = function(){
     element.innerText = item.item;
     form.appendChild(element)
   })
+  generateDeleteUrl();
+}
+
+const generateDeleteUrl = function(){
+  let deleteOption = document.getElementById('deleteOption');
+  
 }
 
 const editTitle = function(){

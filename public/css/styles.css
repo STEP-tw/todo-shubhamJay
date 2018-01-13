@@ -3,7 +3,6 @@ body{
 }
 form{
   text-align: center;
-  margin: 100px;
 }
 
 #addItem{
@@ -17,4 +16,13 @@ form{
 
 .hide{
   visibility: hidden;
+}
+/*a{
+  height: 80px;
+  width: 100px;
+  margin: 0px;
+}*/
+
+h1{
+  align-items: center;
 }

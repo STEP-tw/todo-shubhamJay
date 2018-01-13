@@ -45,4 +45,14 @@ User.prototype.editToDo = function (previousTitle,editedToDoBody) {
     return todos;
   },[])
 };
+
+User.prototype.deleteToDo = function (toDoToDelete) {
+  this.toDoList = this.toDoList.reduce((todos,e)=>{
+    if (e.title != toDoToDelete) {
+      todos.push(e);
+    }
+    return todos;
+  },[]);
+};
+
 module.exports = User;
