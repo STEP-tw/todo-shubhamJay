@@ -96,7 +96,6 @@ const getToDoDataShow = function(templet,data){
 }
 
 const serveToDo = function(req,res){
-  debugger;
   if (req.user && req.user.userId && req.user.sessionId) {
     let allToDosOfUser = req.user.getAllToDoTitles();
     let requiredToDo = req.url.substr(1);
@@ -110,6 +109,19 @@ const serveToDo = function(req,res){
   }
 }
 
+const hanldeEditedToDo = function(req,res){
+  if(req.user && req.url.startsWith("/editToDo/")){
+    let requiredToDo = req.url.split("/").slice(-1)[0];
+    req.user.editToDo(requiredToDo,req.body)
+    debugger;
+    pathToRedirect = req.body.title.replace(/\s/g,"00");
+    res.redirect(`/${pathToRedirect}`);
+  }
+}
+
+const sanitiseReqUrl = function(req,res){
+  req.url = req.url.replace(/00/g,' ');
+}
 
 let todoApp = new ToDoApp();
 // todoApp.loadData();
@@ -117,6 +129,7 @@ let todoApp = new ToDoApp();
 let app = Webapp.create();
 
 app.preUse(getUserInReq.bind(todoApp));
+app.preUse(sanitiseReqUrl);
 app.preUse(handleUserWithOutLogIn);
 app.preUse(serveSlash);
 app.preUse(serveToDo);
@@ -125,6 +138,7 @@ app.get('/getAllToDo',serveToDoTitles);
 app.post('/logIn',handleLogIn.bind(todoApp));
 app.post('/newToDo',handleNewToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
+app.postUse(hanldeEditedToDo)
 app.postUse(serveFileNotFound);
 
 module.exports = app;

@@ -15,19 +15,34 @@ User.prototype.getAllToDoTitles = function() {
   return allToDoTiTles;
 }
 
-User.prototype.addToDo = function(todo) {
-  let title = todo.title;
-  let description = todo.description;
-  let items = Object.keys(todo).reduce((td, k) => {
+User.prototype.createToDo = function (body) {
+  let title = body.title;
+  let description = body.description;
+  let items = Object.keys(body).reduce((td, k) => {
     if (k / 1)
-      td.push({item: todo[k],status: 0 });
+      td.push({item: body[k],status: 0 });
     return td;
   },[]);
-  this.toDoList.push({title:title,description:description,items:items});
+  return {title:title,description:description,items:items}
+};
+
+User.prototype.addToDo = function(todo) {
+  this.toDoList.push(this.createToDo(todo));
 };
 
 User.prototype.getToDo = function(title) {
   return this.toDoList.find((t) => t.title == title);
 };
 
+User.prototype.editToDo = function (previousTitle,editedToDoBody) {
+  let editedToDo = this.createToDo(editedToDoBody);
+  this.toDoList = this.toDoList.reduce((todos,e)=>{
+    if (e.title == previousTitle) {
+      todos.push(editedToDo);
+    } else{
+      todos.push(e);
+    }
+    return todos;
+  },[])
+};
 module.exports = User;

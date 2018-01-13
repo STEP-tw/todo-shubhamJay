@@ -3,6 +3,7 @@ body{
 }
 form{
   text-align: center;
+  margin: 100px;
 }
 
 #addItem{
@@ -11,7 +12,7 @@ form{
 
 .options{
   margin: 50px;
-  float: right;
+  float: left;
 }
 
 .hide{

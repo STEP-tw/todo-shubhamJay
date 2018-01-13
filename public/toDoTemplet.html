@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/styles.css">
-    <script type="text/javascript">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="text/javascript">
     let data = JSON.parse('TODODATA');
-    </script>
-    <script type="text/javascript" src="/js/todo.js">
-    </script>
-    <title>to do</title>
-  </head>
-  <body onload="showItems()">
-    <h1>Title : </h1><h1 id="title">TODOTITLE</h1>
-    <h3><a class="options" href="/logOut">logOut</a></h3>
-    <h3><a class="options" href="/homePage.html">Home</a></h3>
-    <p><b>Description : </b></p><p id="description">DESCRIPTION</p>
-    <button id="editButton" class="options" onclick="getEditingOption()"> edit To Do</button>
+  </script>
+  <script type="text/javascript" src="/js/todo.js">
+  </script>
+  <title>to do</title>
+</head>
+
+<body onload="showItems()">
+  <h3><a class="options" href="/logOut">logOut</a></h3>
+  <h3><a class="options" href="/homePage.html">Home</a></h3><br>
+  <button id="editButton" class="options" onclick="getEditingOption()"> edit To Do</button>
+  <form class="" action="/editToDo/" method="post">
+    <button id="submitButton" name="submit" class="hide">submit changes</button>
+    <h1>Title : </h1>
+    <h1 id="title">TODOTITLE</h1>
+    <p><b>Description : </b></p>
+    <p id="description">DESCRIPTION</p>
     <br><br>
 
-  </body>
+  </form>
+</body>
+
 </html>
