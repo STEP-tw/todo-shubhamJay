@@ -4,15 +4,19 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="/css/styles.css">
     <script type="text/javascript">
-    let data = 'TODODATA';
+    let data = JSON.parse('TODODATA');
     </script>
-    <script type="text/javascript" src="todo.js">
+    <script type="text/javascript" src="/js/todo.js">
     </script>
     <title>to do</title>
   </head>
-  <body>
-    <h1>TODOTITLE</h1>
-    <p>description</p>
+  <body onload="showItems()">
+    <h1>Title : </h1><h1 id="title">TODOTITLE</h1>
+    <h3><a class="options" href="/logOut">logOut</a></h3>
+    <h3><a class="options" href="/homePage.html">Home</a></h3>
+    <p><b>Description : </b></p><p id="description">DESCRIPTION</p>
+    <button  onclick="getEditingOption()"> edit To Do</button>
+    <br><br>
 
   </body>
 </html>

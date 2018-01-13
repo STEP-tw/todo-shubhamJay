@@ -64,21 +64,18 @@ const handleLogOut = function(req,res){
 }
 
 const getUserInReq = function(req,res){
-  ;
   let sessionId = req.cookies.sessionId;
-  let user = this.getUserBySessionId(sessionId)
+  let user = this.getUserBySessionId(sessionId) || {};
   if(sessionId && user)req.user = user;
 };
 
-const serveToDoList = function(req,res){
-  ;
-  let userToDos = req.user.getAllToDo();
+const serveToDoTitles = function(req,res){
+  let userToDos = req.user.getAllToDoTitles();
   res.write(JSON.stringify(userToDos));
   res.end();
 }
 
 const handleNewToDo = function(req,res){
-  ;
   let toDo = req.body;
   this.addToDo(req.cookies.sessionId,toDo);
   res.redirect('/homePage.html');
@@ -91,40 +88,40 @@ const handleUserWithOutLogIn = function(req,res){
 }
 
 const getToDoDataShow = function(templet,data){
-  let toDoWithTitle = templet.replace('TODOTITLE',`<b>title : </b> ${data.title}`);
-  let toDoWithdescription = toDoWithTitle.replace("description",
-    `<b>description : </b>${data.description}`);
-  let todoWithItems = toDoWithdescription.replace("TODODATA",`<b>items</b>${JSON.stringify(data.items)}`)
+  let toDoWithTitle = templet.replace('TODOTITLE',`${data.title}`);
+  let toDoWithdescription = toDoWithTitle.replace("DESCRIPTION",
+    `${data.description}`);
+  let todoWithItems = toDoWithdescription.replace("TODODATA",`${JSON.stringify(data.items)|| ""}`)
   return todoWithItems;
 }
-//
-// const serveToDo = function(req,res){
-//   debugger;
-//   if (req.user.userId && req.user.sessionId) {
-//     let allToDosOfUser = req.user.getAllToDo();
-//     let requiredToDo = req.url.substr(1);
-//     if(req.user && allToDosOfUser.includes(requiredToDo)){
-//       let todoData = req.user.getToDo(requiredToDo);
-//       res.statusCode =200;
-//       res.setHeader('content-type',"text/html");
-//       res.write(getToDoDataShow(toDoTemplet,todoData));
-//       res.end();
-//     }
-//   }
-// }
+
+const serveToDo = function(req,res){
+  debugger;
+  if (req.user && req.user.userId && req.user.sessionId) {
+    let allToDosOfUser = req.user.getAllToDoTitles();
+    let requiredToDo = req.url.substr(1);
+    if(allToDosOfUser.includes(requiredToDo)){
+      let todoData = req.user.getToDo(requiredToDo);
+      res.statusCode =200;
+      res.setHeader('content-type',"text/html");
+      res.write(getToDoDataShow(toDoTemplet,todoData));
+      res.end();
+    }
+  }
+}
 
 
 let todoApp = new ToDoApp();
-todoApp.loadData();
+// todoApp.loadData();
 
 let app = Webapp.create();
 
 app.preUse(getUserInReq.bind(todoApp));
 app.preUse(handleUserWithOutLogIn);
 app.preUse(serveSlash);
-// app.preUse(serveToDo);
+app.preUse(serveToDo);
 app.get("/logOut",handleLogOut);
-app.get('/getAllToDo',serveToDoList);
+app.get('/getAllToDo',serveToDoTitles);
 app.post('/logIn',handleLogIn.bind(todoApp));
 app.post('/newToDo',handleNewToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
