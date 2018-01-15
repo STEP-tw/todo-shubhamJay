@@ -2,8 +2,7 @@ const User = function(name, userId, password) {
   this.name = name;
   this.userId = userId;
   this.password = password;
-  this.toDoList = [{title:"atwork",description:"imp",
-    items:[{item:"eat",status:0},{item:"sleep",status:0},{item:"repeat",status:0}]}];
+  this.toDoList = [];
 }
 
 User.prototype.addSessionId = function(sessionId) {
@@ -34,22 +33,33 @@ User.prototype.getToDo = function(title) {
   return this.toDoList.find((t) => t.title == title);
 };
 
+User.prototype.updateItemStatus = function (todo,updatedBody) {
+  return todo.reduce((updatedToDos,item,index)=>{
+    if(updatedBody[`status${index+1}`] == "complete"){
+      item.status = 1;
+    }
+    updatedToDos.push(item);
+    return updatedToDos;
+  },[])
+};
+
 User.prototype.editToDo = function (previousTitle,editedToDoBody) {
   let editedToDo = this.createToDo(editedToDoBody);
-  this.toDoList = this.toDoList.reduce((todos,e)=>{
-    if (e.title == previousTitle) {
+  editedToDo.items = this.updateItemStatus(editedToDo.items,editedToDoBody)
+  this.toDoList = this.toDoList.reduce((todos,ele)=>{
+    if (ele.title == previousTitle) {
       todos.push(editedToDo);
     } else{
-      todos.push(e);
+      todos.push(ele);
     }
     return todos;
   },[])
 };
 
 User.prototype.deleteToDo = function (toDoToDelete) {
-  this.toDoList = this.toDoList.reduce((todos,e)=>{
-    if (e.title != toDoToDelete) {
-      todos.push(e);
+  this.toDoList = this.toDoList.reduce((todos,ele)=>{
+    if (ele.title != toDoToDelete) {
+      todos.push(ele);
     }
     return todos;
   },[]);

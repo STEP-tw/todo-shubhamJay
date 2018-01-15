@@ -2,8 +2,13 @@ const User = require('./user.js');
 const fs = require('fs');
 
 const ToDoApp = function() {
-  this.allUsers = [new User("shubham", "shubham", "shubham")]
+  this.allUsers = [];
 }
+
+ToDoApp.prototype.addUser = function (name,userId,password) {
+  let newUser = new User(name,userId,password);
+  this.allUsers.push(newUser);
+};
 
 ToDoApp.prototype.isValidUser = function(userId, password) {
   let user = this.getUser(userId);
@@ -19,14 +24,13 @@ ToDoApp.prototype.getUserBySessionId = function(sessionId) {
 };
 
 ToDoApp.prototype.addSessionIdToUser = function(userId, sessionId) {
-  let user = this.allUsers[userId] || {};
+  let user = this.allUsers[userId];
   user.addSessionId(sessionId);
 }
 
 ToDoApp.prototype.addToDo = function(sessionId, newToDo) {
   let user = this.getUserBySessionId(sessionId);
   user.addToDo(newToDo);
-  this.storeData();
 };
 
 ToDoApp.prototype.addSessionIdTo = function (userId,sessionId) {
@@ -53,21 +57,21 @@ ToDoApp.prototype.deleteToDoOf = function (sessionId,toDoToDelete) {
   let user = this.getUserBySessionId(sessionId);
   user.deleteToDo(toDoToDelete);
 };
-
-ToDoApp.prototype.storeData = function() {
-  fs.writeFile("./data/toDo.json", JSON.stringify(this.allUsers) || [], (err) => {
-    if (err) console.log(err);
-  })
-};
-
-ToDoApp.prototype.loadData = function() {
-  fs.readFile("./data/toDo.json", (err, data) => {
-    if (err) console.log(err);
-    if (data) {
-      let toDos = JSON.parse(data.toString());
-      this.allUsers = this.allUsers.concat(toDos);
-    }
-  })
-};
+//
+// ToDoApp.prototype.storeData = function() {
+//   fs.writeFile("./data/toDo.json", JSON.stringify(this.allUsers) || [], (err) => {
+//     if (err) console.log(err);
+//   })
+// };
+//
+// ToDoApp.prototype.loadData = function() {
+//   fs.readFile("./data/toDo.json", (err, data) => {
+//     if (err) console.log(err);
+//     if (data) {
+//       let toDos = JSON.parse(data.toString());
+//       this.allUsers = this.allUsers.concat(toDos);
+//     }
+//   })
+// };
 
 module.exports = ToDoApp;

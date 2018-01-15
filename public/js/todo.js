@@ -1,18 +1,17 @@
 const showItems = function(){
   let list = document.querySelector("ol");
   let element;
-  console.log(data);
   data.forEach((item,index)=>{
     if(+item.status){
       element = document.createElement("strike");
-    }else {
+    } else {
       element = document.createElement("li");
     }
     element.id = `item${index+1}`;
     element.name = index;
     element.innerText = item.item;
     list.appendChild(element);
-  })
+  });
 }
 
 
@@ -32,14 +31,13 @@ const editDescription = function(){
   description.replaceChild(descEditBox,description.childNodes[0]);
 }
 
-const getOption = function(value){
+const createOption = function(name){
   let option = document.createElement("option");
-  option.value = value;
-  option.innerText = value;
+  option.innerText = name;
   return option;
 }
 
-const getTextBox = function(name){
+const createTextBox = function(name){
   let itemEditBox = document.createElement("textArea");
   itemEditBox.name = name;
   return itemEditBox;
@@ -48,25 +46,26 @@ const getTextBox = function(name){
 const getSelectionOptions = function(name){
   let selectOption = document.createElement("select");
   selectOption.name = `status${name}`
-  let doneOption = document.createElement('option')
-  doneOption.innerText = "complete";
-  let notdoneOption = document.createElement('option');
-  notdoneOption.innerText = "incomplete";
-  selectOption.appendChild(doneOption);
+  let doneOption = createOption("complete");
+  let notdoneOption = createOption("incomplete");
   selectOption.appendChild(notdoneOption);
+  selectOption.appendChild(doneOption);
   return selectOption;
 }
 
+const getEditingOptionForItem = function(item,index){
+  let itemEditBox = createTextBox(index+1);
+  let selectOption = getSelectionOptions(index+1);
+  itemEditBox.innerText = item.innerText;
+  item.replaceChild(itemEditBox,item.childNodes[0]);
+  item.appendChild(selectOption);
+}
+
 const editItems = function(){
-  let items = document.querySelectorAll("li");
-  for (var i = 0; i < items.length; i++) {
-    let item = items[i];
-    let itemEditBox = getTextBox(i+1);
-    itemEditBox.innerText = item.innerText;
-    let selectOption = getSelectionOptions(i+1);
-    item.replaceChild(itemEditBox,item.childNodes[0]);
-    item.appendChild(selectOption);
-  };
+  let completedItems = document.querySelectorAll("strike");
+  let incompletedItems = document.querySelectorAll("li");
+  incompletedItems.forEach(getEditingOptionForItem);
+  completedItems.forEach(getEditingOptionForItem);
 }
 
 const hideEditOption = function(){
