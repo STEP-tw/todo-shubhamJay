@@ -1,7 +1,6 @@
 let chai = require('chai');
 let assert = chai.assert;
-const User = require("../user.js");
-
+const User = require("../models/user.js");
 
 describe("User ",()=>{
   describe("addSessionId",()=>{
