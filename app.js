@@ -129,7 +129,15 @@ const handleDeletingToDo = function(req,res){
   }
 };
 
+
+const mockUser =()=> {
+  todoApp.addUser("shubham","shubham","shubham");
+  todoApp.addSessionIdTo("shubham",1001);
+  todoApp.addToDo(1001,{title:"atHome",description:"notDone",1:"go Home",2:"sleep"});
+};
+
 let todoApp = new ToDoApp();
+  mockUser();
 
 let app = Webapp.create();
 
