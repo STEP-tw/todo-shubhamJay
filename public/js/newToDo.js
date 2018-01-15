@@ -1,9 +1,9 @@
 let counter = 0;
 
 const getTextBox = function(){
-  let body = document.querySelector("body");
+  let form = document.querySelector("form");
   let textBox = document.createElement("textArea");
   textBox.name = `${++counter}`;
-  body.appendChild(textBox)
-  body.innerHTML += '<br/><br/>'
+  form.appendChild(textBox)
+  form.innerHTML += '<br/><br/>'
 }
