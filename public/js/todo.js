@@ -1,23 +1,20 @@
 const showItems = function(){
-  let form = document.querySelector("form");
+  let list = document.querySelector("ol");
   let element;
+  console.log(data);
   data.forEach((item,index)=>{
-    if(item.status){
+    if(+item.status){
       element = document.createElement("strike");
     }else {
-    element = document.createElement("li");
+      element = document.createElement("li");
     }
     element.id = `item${index+1}`;
+    element.name = index;
     element.innerText = item.item;
-    form.appendChild(element)
+    list.appendChild(element);
   })
-  generateDeleteUrl();
 }
 
-const generateDeleteUrl = function(){
-  let deleteOption = document.getElementById('deleteOption');
-  
-}
 
 const editTitle = function(){
   let title = document.getElementById("title");
@@ -42,14 +39,33 @@ const getOption = function(value){
   return option;
 }
 
+const getTextBox = function(name){
+  let itemEditBox = document.createElement("textArea");
+  itemEditBox.name = name;
+  return itemEditBox;
+}
+
+const getSelectionOptions = function(name){
+  let selectOption = document.createElement("select");
+  selectOption.name = `status${name}`
+  let doneOption = document.createElement('option')
+  doneOption.innerText = "complete";
+  let notdoneOption = document.createElement('option');
+  notdoneOption.innerText = "incomplete";
+  selectOption.appendChild(doneOption);
+  selectOption.appendChild(notdoneOption);
+  return selectOption;
+}
+
 const editItems = function(){
-  let items = document.querySelector('form').querySelectorAll("li");
+  let items = document.querySelectorAll("li");
   for (var i = 0; i < items.length; i++) {
     let item = items[i];
-    let itemEditBox = document.createElement("textArea");
-    itemEditBox.name = `${i+1}`;
+    let itemEditBox = getTextBox(i+1);
     itemEditBox.innerText = item.innerText;
+    let selectOption = getSelectionOptions(i+1);
     item.replaceChild(itemEditBox,item.childNodes[0]);
+    item.appendChild(selectOption);
   };
 }
 
@@ -64,14 +80,7 @@ const showSubmitButton = function(){
   submitButton.className = "options";
 }
 
-const createFormUrl = function(){
-  let title = document.getElementById("title");
-  let form = document.querySelector('form');
-  form.action += title.innerText;
-}
-
 const getEditingOption = function(){
-  createFormUrl();
   editTitle();
   editDescription();
   editItems();

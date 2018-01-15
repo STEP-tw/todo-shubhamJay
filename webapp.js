@@ -75,8 +75,7 @@ const main = function(req, res) {
   req.cookies = parseCookies(req.headers.cookie || '');
   let content = "";
   req.on('data', data => content += data.toString())
-  req.on('end', () => {;
-    // console.log(content);
+  req.on('end', () => {
     req.body = parseBody(content);
     content = "";
     this._preprocess.forEach(middleware => {

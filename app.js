@@ -44,8 +44,7 @@ const actionOnLogInFailed = function(res){
 
 const actionOnLogIn = function(req,res){
   let sessionId = new Date().getTime();
-  let user = this.getUser(req.body.userId);
-  user.addSessionId(sessionId);
+  this.addSessionIdTo(req.body.userId,sessionId);
   res.setHeader('Set-Cookie',`sessionId=${sessionId}`);
   res.redirect('/homePage.html');
 }
@@ -70,7 +69,7 @@ const getUserInReq = function(req,res){
 };
 
 const serveToDoTitles = function(req,res){
-  let userToDos = req.user.getAllToDoTitles();
+  let userToDos = this.getAllToDoTitlesOf(req.cookies.sessionId);
   res.write(JSON.stringify(userToDos));
   res.end();
 }
@@ -96,11 +95,11 @@ const getToDoDataShow = function(templet,data){
 }
 
 const serveToDo = function(req,res){
-  if (req.user && req.user.userId && req.user.sessionId) {
-    let allToDosOfUser = req.user.getAllToDoTitles();
+  if (req.user && req.user.sessionId) {
+    let allToDosOfUser = this.getAllToDoTitlesOf(req.cookies.sessionId);
     let requiredToDo = req.url.substr(1);
     if(allToDosOfUser.includes(requiredToDo)){
-      let todoData = req.user.getToDo(requiredToDo);
+      let todoData = this.getRequiredToDoOf(req.cookies.sessionId,requiredToDo);
       res.statusCode =200;
       res.setHeader('content-type',"text/html");
       res.write(getToDoDataShow(toDoTemplet,todoData));
@@ -112,8 +111,7 @@ const serveToDo = function(req,res){
 const hanldeEditedToDo = function(req,res){
   if(req.user && req.url.startsWith("/editToDo/")){
     let requiredToDo = req.url.split("/").slice(-1)[0];
-    req.user.editToDo(requiredToDo,req.body)
-    debugger;
+    this.editToDoOf(req.cookies.sessionId,requiredToDo,req.body)
     pathToRedirect = req.body.title.replace(/\s/g,"00");
     res.redirect(`/${pathToRedirect}`);
   }
@@ -126,13 +124,12 @@ const sanitiseReqUrl = function(req,res){
 const handleDeletingToDo = function(req,res){
   if(req.user && req.url.startsWith("/delete/")){
     let requiredToDo = req.url.split("/").slice(-1)[0];
-    req.user.deleteToDo(requiredToDo);
+    this.deleteToDoOf(req.cookies.sessionId,requiredToDo);
     res.redirect(`/homePage.html`);
   }
 };
 
 let todoApp = new ToDoApp();
-// todoApp.loadData();
 
 let app = Webapp.create();
 
@@ -140,14 +137,14 @@ app.preUse(getUserInReq.bind(todoApp));
 app.preUse(sanitiseReqUrl);
 app.preUse(handleUserWithOutLogIn);
 app.preUse(serveSlash);
-app.preUse(serveToDo);
+app.preUse(serveToDo.bind(todoApp));
 app.get("/logOut",handleLogOut);
-app.get('/getAllToDo',serveToDoTitles);
+app.get('/getAllToDo',serveToDoTitles.bind(todoApp));
 app.post('/logIn',handleLogIn.bind(todoApp));
 app.post('/newToDo',handleNewToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
-app.postUse(handleDeletingToDo);
-app.postUse(hanldeEditedToDo)
+app.postUse(handleDeletingToDo.bind(todoApp));
+app.postUse(hanldeEditedToDo.bind(todoApp))
 app.postUse(serveFileNotFound);
 
 module.exports = app;
