@@ -5,8 +5,30 @@
     <link rel="stylesheet" href="/css/styles.css">
     <title>log In page</title>
   </head>
-  <body>
-    <h1>Log In</h1>
+  <script type="text/javascript">
+
+  const parseKeyVal = function(text) {
+      return text.split(";").reduce((parsedKeyVals, ele) => {
+        let keyValPairs = ele.trim().split('=');
+        parsedKeyVals[keyValPairs[0]] = keyValPairs[1];
+        return parsedKeyVals;
+      }, {});
+    };
+
+  const showApropriateMessage = function(){
+    let cookies = parseKeyVal(document.cookie);
+    let msgBox = document.getElementById('message');
+    console.log(cookies);
+    if (+cookies.logInFailed) {
+      message.innerText = "logIn failed";
+    }else {
+      message.innerText = "logIn";
+    }
+  }
+  
+  </script>
+  <body onload="showApropriateMessage()">
+    <h1 id="message">Log In</h1>
     <form  action="/logIn" method="POST">
       Your Name : <input type="text" name="userId" >
       <br><br>
