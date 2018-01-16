@@ -20,18 +20,10 @@ const serveSlash = (req,res) =>{
   }
 }
 
-const serveFileNotFound = (req,res)=>{
-  if(!res.finished){
-    res.statusCode = 404;
-    res.write("file not Found");
-    res.end();
-  }
-}
-
 const serveStaticFiles = (req,res)=>{
   if(!res.finished && fs.existsSync("./public"+req.url)){
     res.statusCode =200;
-    res.setHeader('content-type',getContentType(req.url));
+    res.setHeader('Content-Type',getContentType(req.url));
     res.write(fs.readFileSync("./public"+req.url))
     res.end();
   };
@@ -57,14 +49,14 @@ const handleLogIn = function(req,res){
   }
 }
 
-const handleLogOut = function(req,res){
+const handleLogout = function(req,res){
   res.setHeader('Set-Cookie',`sessionId=0; Max-Age=-1`);
   res.redirect('/index.html');
 }
 
 const getUserInReq = function(req,res){
   let sessionId = req.cookies.sessionId;
-  let user = this.getUserBySessionId(sessionId) || {};
+  let user = this.getUserBySessionId(sessionId);
   if(sessionId && user)req.user = user;
 };
 
@@ -80,11 +72,17 @@ const handleNewToDo = function(req,res){
   res.redirect('/homePage.html');
 }
 
-const handleUserWithOutLogIn = function(req,res){
-  if(req.urlIsOneOf(["/homePage.html","/createNewToDo.html"]) && !req.user){
-    res.redirect('./index.html');
+const restrictLoggedOutUser = function(req,res){
+  if(req.urlIsOneOf(["/homePage.html","/createNewToDo.html",'/logout']) && !req.user){
+    res.redirect('/index.html');
   }
 }
+
+const restrictLoggedinUser = function(req,res){
+  if (req.urlIsOneOf(['/','/index.html'])&& req.user) {
+    res.redirect('/homePage.html');
+  }
+};
 
 const getToDoDataShow = function(templet,data){
   let toDoWithTitle = templet.replace(/TODOTITLE/g,`${data.title}`);
@@ -101,8 +99,9 @@ const serveToDo = function(req,res){
     if(allToDosOfUser.includes(requiredToDo)){
       let todoData = this.getRequiredToDoOf(req.cookies.sessionId,requiredToDo);
       res.statusCode =200;
-      res.setHeader('content-type',"text/html");
-      res.write(getToDoDataShow(toDoTemplet,todoData));
+      res.setHeader('Content-Type',"text/html");
+      let dataToShow = getToDoDataShow(toDoTemplet,todoData);
+      res.write(dataToShow);
       res.end();
     }
   }
@@ -129,30 +128,29 @@ const handleDeletingToDo = function(req,res){
   }
 };
 
-
-const mockUser =()=> {
-  todoApp.addUser("shubham","shubham","shubham");
-  todoApp.addSessionIdTo("shubham",1001);
-  todoApp.addToDo(1001,{title:"atHome",description:"notDone",1:"go Home",2:"sleep"});
+const mockUser =function() {
+    this.addUser("shubham","shubham","shubham");
+    this.addSessionIdToUser("shubham",1001);
+    this.addToDo(1001,{title:"atHome",description:"notDone",1:"go Home",2:"sleep"});
 };
 
 let todoApp = new ToDoApp();
-  mockUser();
+mockUser.call(todoApp);
 
 let app = Webapp.create();
 
 app.preUse(getUserInReq.bind(todoApp));
 app.preUse(sanitiseReqUrl);
-app.preUse(handleUserWithOutLogIn);
+app.preUse(restrictLoggedOutUser);
+app.preUse(restrictLoggedinUser);
 app.preUse(serveSlash);
 app.preUse(serveToDo.bind(todoApp));
-app.get("/logOut",handleLogOut);
+app.get("/logout",handleLogout);
 app.get('/getAllToDo',serveToDoTitles.bind(todoApp));
 app.post('/logIn',handleLogIn.bind(todoApp));
 app.post('/newToDo',handleNewToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
 app.postUse(handleDeletingToDo.bind(todoApp));
 app.postUse(hanldeEditedToDo.bind(todoApp))
-app.postUse(serveFileNotFound);
 
 module.exports = app;

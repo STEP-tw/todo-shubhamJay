@@ -24,7 +24,7 @@ ToDoApp.prototype.getUserBySessionId = function(sessionId) {
 };
 
 ToDoApp.prototype.addSessionIdToUser = function(userId, sessionId) {
-  let user = this.allUsers[userId];
+  let user = this.allUsers.find((u) => u.userId == userId);
   user.addSessionId(sessionId);
 }
 

@@ -13,21 +13,19 @@
 </head>
 
 <body onload="showItems()">
-  <a class="options" href="/logOut">logOut</a>
+  <a class="options" href="/logout">logout</a>
   <a class="options" href="/homePage.html">Home</a>
   <br><br>
   <form class="" action="/editToDo/TODOTITLE" method="post">
-    <h1>Title :<span id="title">TODOTITLE</span> </h1>
-    <p><b>Description : </b></p>
-    <p id="description">DESCRIPTION</p>
-    <br><br>
+    <h1 id="title" >TODOTITLE</h1><br>
+    <h3 id="description">DESCRIPTION</h3>
+    <br>
     <ol class="todoItems">
 
     </ol>
     <button id="submitButton" class="hide">submit changes</button>
   </form>
   <button id="editButton" class="options" onclick="getEditingOption()"> edit To Do</button>
-  <h3><a id="deleteOption" class="options" href="/delete/TODOTITLE">Delete To Do</a></h3><br>
+  <p><a id="deleteOption" class="options" href="/delete/TODOTITLE">Delete To Do</a></p><br>
 </body>
-
 </html>
