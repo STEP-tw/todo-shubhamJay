@@ -1,6 +1,6 @@
 {
   "name": "toDo-App",
-  "main": "src/index.html",
+  "main": "src/index",
   "dependencies": {
     "chai": "^4.1.2"
   },

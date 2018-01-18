@@ -1,22 +1,21 @@
 const Webapp = require('./webapp.js');
 const fs = require('fs');
 const ToDoApp = require('./todoApp.js');
-const toDoTemplet = fs.readFileSync("./public/toDoTemplet.html","utf8");
+const toDoTemplet = fs.readFileSync("./public/toDoTemplet","utf8");
 
 const getContentType = function(path){
   let fileExt = path.split(".").slice(-1)[0];
   let contentTypes = {
     'js':"text/javascript",
-    'html':'text/html',
     'img':'img/gif',
     'css':'text/css',
   }
-  return contentTypes[fileExt];
+  return contentTypes[fileExt] || 'text/html';
 }
 
 const serveSlash = (req,res) =>{
   if(req.url == "/"){
-    req.url = '/index.html'
+    req.url = '/index'
   }
 }
 
@@ -31,14 +30,14 @@ const serveStaticFiles = (req,res)=>{
 
 const actionOnLogInFailed = function(res){
   res.setHeader('Set-Cookie',`logInFailed=1; Max-Age=5`);
-  res.redirect('/index.html');
+  res.redirect('/index');
 }
 
 const actionOnLogIn = function(req,res){
   let sessionId = new Date().getTime();
   this.addSessionIdTo(req.body.userId,sessionId);
   res.setHeader('Set-Cookie',`sessionId=${sessionId}`);
-  res.redirect('/homePage.html');
+  res.redirect('/homePage');
 }
 
 const handleLogIn = function(req,res){
@@ -51,7 +50,7 @@ const handleLogIn = function(req,res){
 
 const handleLogout = function(req,res){
   res.setHeader('Set-Cookie',`sessionId=0; Max-Age=-1`);
-  res.redirect('/index.html');
+  res.redirect('/index');
 }
 
 const getUserInReq = function(req,res){
@@ -61,26 +60,24 @@ const getUserInReq = function(req,res){
 };
 
 const serveToDoTitles = function(req,res){
-  let userToDos = this.getAllToDoTitlesOf(req.cookies.sessionId);
-  res.write(JSON.stringify(userToDos));
+  res.write(JSON.stringify(req.user.getAllToDoTitles()));
   res.end();
 }
 
 const handleNewToDo = function(req,res){
-  let toDo = req.body;
-  this.addToDo(req.cookies.sessionId,toDo);
-  res.redirect('/homePage.html');
+  req.user.addToDo(req.cookies.sessionId,req.body);
+  res.redirect('/homePage');
 }
 
 const restrictLoggedOutUser = function(req,res){
-  if(req.urlIsOneOf(["/homePage.html","/createNewToDo.html",'/logout']) && !req.user){
-    res.redirect('/index.html');
+  if(req.urlIsOneOf(["/homePage","/createNewToDo",'/logout']) && !req.user){
+    res.redirect('/index');
   }
 }
 
 const restrictLoggedinUser = function(req,res){
-  if (req.urlIsOneOf(['/','/index.html'])&& req.user) {
-    res.redirect('/homePage.html');
+  if (req.urlIsOneOf(['/','/index'])&& req.user) {
+    res.redirect('/homePage');
   }
 };
 
@@ -93,39 +90,29 @@ const getToDoDataShow = function(templet,data){
 }
 
 const serveToDo = function(req,res){
-  if (req.user && req.user.sessionId) {
-    let allToDosOfUser = this.getAllToDoTitlesOf(req.cookies.sessionId);
-    let requiredToDo = req.url.substr(1);
-    if(allToDosOfUser.includes(requiredToDo)){
-      let todoData = this.getRequiredToDoOf(req.cookies.sessionId,requiredToDo);
-      res.statusCode =200;
-      res.setHeader('Content-Type',"text/html");
-      let dataToShow = getToDoDataShow(toDoTemplet,todoData);
-      res.write(dataToShow);
-      res.end();
-    }
-  }
+  res.statusCode = 200;
+  res.setHeader('Content-Type',"text/html");
+  let dataToShow = getToDoDataShow(toDoTemplet,req.toDo);
+  res.write(dataToShow);
+  res.end();
 }
 
-const hanldeEditedToDo = function(req,res){
-  if(req.user && req.url.startsWith("/editToDo/")){
-    let requiredToDo = req.url.split("/").slice(-1)[0];
-    this.editToDoOf(req.cookies.sessionId,requiredToDo,req.body)
-    pathToRedirect = req.body.title.replace(/\s/g,"00");
-    res.redirect(`/${pathToRedirect}`);
-  }
+const handleEditedToDo = function(req,res){
+  req.user.editToDo(req.toDoID,req.body);
+  res.redirect(`/toDo/${req.toDoID}`);
 }
 
-const sanitiseReqUrl = function(req,res){
-  req.url = req.url.replace(/00/g,' ');
+const getToDoInReq = function(req,res){
+  if(req.user && req.url.startsWith("/toDo/")){
+    req.toDoID = req.url.split("/")[2];
+    req.toDo = req.user.getToDo(req.toDoID);
+    req.url = "/toDo";
+  };
 }
 
 const handleDeletingToDo = function(req,res){
-  if(req.user && req.url.startsWith("/delete/")){
-    let requiredToDo = req.url.split("/").slice(-1)[0];
-    this.deleteToDoOf(req.cookies.sessionId,requiredToDo);
-    res.redirect(`/homePage.html`);
-  }
+  req.user.deleteToDo(req.toDoID);
+  res.redirect(`/homePage`);
 };
 
 const mockUser =function() {
@@ -140,17 +127,17 @@ mockUser.call(todoApp);
 let app = Webapp.create();
 
 app.preUse(getUserInReq.bind(todoApp));
-app.preUse(sanitiseReqUrl);
+app.preUse(getToDoInReq);
 app.preUse(restrictLoggedOutUser);
 app.preUse(restrictLoggedinUser);
 app.preUse(serveSlash);
-app.preUse(serveToDo.bind(todoApp));
 app.get("/logout",handleLogout);
 app.get('/getAllToDo',serveToDoTitles.bind(todoApp));
+app.get("/toDo",serveToDo.bind(todoApp));
 app.post('/logIn',handleLogIn.bind(todoApp));
 app.post('/newToDo',handleNewToDo.bind(todoApp));
+app.post('/toDo',handleEditedToDo.bind(todoApp));
+app.delete('/toDo',handleDeletingToDo.bind(todoApp));
 app.postUse(serveStaticFiles);
-app.postUse(handleDeletingToDo.bind(todoApp));
-app.postUse(hanldeEditedToDo.bind(todoApp))
 
 module.exports = app;

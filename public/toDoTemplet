@@ -14,9 +14,9 @@
 
 <body onload="showItems()">
   <a class="options" href="/logout">logout</a>
-  <a class="options" href="/homePage.html">Home</a>
+  <a class="options" href="/homePage">Home</a>
   <br><br>
-  <form class="" action="/editToDo/TODOTITLE" method="post">
+  <form class="" action="/toDo/0" method="post">
     <h1 id="title" >TODOTITLE</h1><br>
     <h3 id="description">DESCRIPTION</h3>
     <br>
@@ -26,6 +26,6 @@
     <button id="submitButton" class="hide">submit changes</button>
   </form>
   <button id="editButton" class="options" onclick="getEditingOption()"> edit To Do</button>
-  <p><a id="deleteOption" class="options" href="/delete/TODOTITLE">Delete To Do</a></p><br>
+  <p><a id="deleteOption" class="options" href="/toDo/0">Delete To Do</a></p><br>
 </body>
 </html>

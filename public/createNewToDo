@@ -10,7 +10,7 @@
   <body>
     <h2>enter new To Do</h2>
     <h3><a class="options" href="/logout">logout</a></h3>
-    <h3><a class="options" href="/homePage.html">Home</a></h3>
+    <h3><a class="options" href="/homePage">Home</a></h3>
     <form action="/newToDo" method="POST">
       title : <input type="text" name="title" ><br><br>
       description : <textarea type="text" name="description" ></textarea><br><br>

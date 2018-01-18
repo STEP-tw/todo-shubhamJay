@@ -9,7 +9,7 @@
   </head>
   <body onload="loadToDo()">
       <h3><a class="options" href="/logout">logout</a></h3>
-      <h3><a href="/createNewToDo.html">Create New To DO</a></h3>
+      <h3><a href="/createNewToDo">Create New To DO</a></h3>
       <h3>Your Previous To Do Lists</h3>
   </body>
 </html>

@@ -1,8 +1,8 @@
 const showToDo = function(todos){
-  todos.forEach((i)=>{
+  todos.forEach((i,index)=>{
     let body = document.querySelector('body');
     let element = document.createElement('li');
-    element.innerHTML = `<a href=/${i.replace(/" "/g,"00")}>${i}</a>`;
+    element.innerHTML = `<a href=/toDo/${index}>${i}</a>`;
     body.appendChild(element);
   });
 };
