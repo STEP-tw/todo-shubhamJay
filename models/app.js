@@ -65,12 +65,12 @@ const serveToDoTitles = function(req,res){
 }
 
 const handleNewToDo = function(req,res){
-  req.user.addToDo(req.cookies.sessionId,req.body);
+  req.user.addToDo(req.body);
   res.redirect('/homePage');
 }
 
 const restrictLoggedOutUser = function(req,res){
-  if(req.urlIsOneOf(["/homePage","/createNewToDo",'/logout']) && !req.user){
+  if(!req.urlIsOneOf(['/index','/css/styles.css','/logIn']) && !req.user){
     res.redirect('/index');
   }
 }
@@ -81,20 +81,22 @@ const restrictLoggedinUser = function(req,res){
   }
 };
 
-const getToDoDataShow = function(templet,data){
-  let toDoWithTitle = templet.replace(/TODOTITLE/g,`${data.title}`);
-  let toDoWithdescription = toDoWithTitle.replace("DESCRIPTION",
-    `${data.description}`);
-  let todoWithItems = toDoWithdescription.replace("TODODATA",`${JSON.stringify(data.items)|| ""}`)
-  return todoWithItems;
+const getToDoDataShow = function(templet,data,toDoID){
+  let toDoWithTitle = templet.replace(/TODOTITLE/g,`${data.title}`)
+    .replace(/TODOID/g,`${toDoID}`)
+    .replace("DESCRIPTION",`${data.description}`)
+    .replace("TODODATA",`${JSON.stringify(data.items)|| ""}`);
+  return toDoWithTitle;
 }
 
 const serveToDo = function(req,res){
-  res.statusCode = 200;
-  res.setHeader('Content-Type',"text/html");
-  let dataToShow = getToDoDataShow(toDoTemplet,req.toDo);
-  res.write(dataToShow);
-  res.end();
+  if(req.toDo && req.toDoID){
+    res.statusCode = 200;
+    res.setHeader('Content-Type',"text/html");
+    let dataToShow = getToDoDataShow(toDoTemplet,req.toDo,req.toDoID);
+    res.write(dataToShow);
+    res.end();
+  }
 }
 
 const handleEditedToDo = function(req,res){
@@ -104,15 +106,19 @@ const handleEditedToDo = function(req,res){
 
 const getToDoInReq = function(req,res){
   if(req.user && req.url.startsWith("/toDo/")){
-    req.toDoID = req.url.split("/")[2];
+    let urlContents = req.url.split("/");
+    req.url = `/toDo`;
+    req.toDoID = urlContents[2];
     req.toDo = req.user.getToDo(req.toDoID);
-    req.url = "/toDo";
   };
 }
 
 const handleDeletingToDo = function(req,res){
+  debugger;
   req.user.deleteToDo(req.toDoID);
-  res.redirect(`/homePage`);
+  res.statusCode = 200;
+  res.write("/homePage");
+  res.end();
 };
 
 const mockUser =function() {

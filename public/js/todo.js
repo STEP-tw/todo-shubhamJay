@@ -86,3 +86,14 @@ const getEditingOption = function(){
   hideEditOption();
   showSubmitButton();
 }
+
+const deleteToDo = function(toDoID){
+  let req =new XMLHttpRequest();
+  req.onreadystatechange = function(){
+    if(this.readyState == 4 && this.status == 200)
+    console.log(this.responseText);
+    window.location = this.responseText;
+  };
+  req.open("DELETE",`/toDo/${toDoID}`);
+  req.send();
+}

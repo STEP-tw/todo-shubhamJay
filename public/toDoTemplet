@@ -16,7 +16,7 @@
   <a class="options" href="/logout">logout</a>
   <a class="options" href="/homePage">Home</a>
   <br><br>
-  <form class="" action="/toDo/0" method="post">
+  <form class="" action="/toDo/TODOID" method="post">
     <h1 id="title" >TODOTITLE</h1><br>
     <h3 id="description">DESCRIPTION</h3>
     <br>
@@ -26,6 +26,6 @@
     <button id="submitButton" class="hide">submit changes</button>
   </form>
   <button id="editButton" class="options" onclick="getEditingOption()"> edit To Do</button>
-  <p><a id="deleteOption" class="options" href="/toDo/0">Delete To Do</a></p><br>
+  <button type="button" name="button" onclick="deleteToDo(TODOID)">delete todo</button>
 </body>
 </html>
