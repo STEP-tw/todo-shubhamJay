@@ -10,9 +10,9 @@ class ToDo {
     this.items.push(itemToAdd);
   }
   paramsToItems(rawBody){
-    return Object.keys(rawBody).reduce((td, k,index) => {
+    return Object.keys(rawBody).reduce((td, k) => {
       if (k / 1)
-        td.push({item: rawBody[k],status: rawBody[`status${index+1}`]||0 });
+        td.push({item: rawBody[k],status: rawBody[`status${k}`]||0 });
       return td;
     },[]);
   }

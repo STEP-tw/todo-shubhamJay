@@ -228,6 +228,22 @@ describe('app', () => {
       })
     })
   })
+
+  describe('GET /userName', () => {
+    it('should give name of the user', done => {
+      request(app, {
+        method: 'GET',
+        url: '/userName',
+        headers: {
+          cookie: 'sessionId=1001',
+        }
+      }, res => {
+        th.body_contains(res, 'shubham');
+        done();
+      })
+    })
+  })
+
   describe('POST /logIn', () => {
     it('redirects to homePage for valid user', done => {
       request(app, {

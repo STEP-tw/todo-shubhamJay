@@ -7,8 +7,9 @@
     </script>
     <title>home Page</title>
   </head>
-  <body onload="loadToDo()">
+  <body onload="actionOnLoad()">
       <h3><a class="options" href="/logout">logout</a></h3>
+      <h3 id="activeUser">Active User : </h3>
       <h3><a href="/createNewToDo">Create New To DO</a></h3>
       <h3>Your Previous To Do Lists</h3>
   </body>

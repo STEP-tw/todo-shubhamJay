@@ -12,9 +12,10 @@
   <title>to do</title>
 </head>
 
-<body onload="showItems()">
+<body onload="actionOnLoad()">
   <a class="options" href="/logout">logout</a>
   <a class="options" href="/homePage">Home</a>
+  <h3 id="activeUser">Active User : </h3>
   <br><br>
   <form class="" action="/toDo/TODOID" method="post">
     <h1 id="title" >TODOTITLE</h1><br>

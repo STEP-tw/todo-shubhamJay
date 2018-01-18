@@ -13,7 +13,7 @@ const getContentType = function(path){
   return contentTypes[fileExt] || 'text/html';
 }
 
-const serveSlash = (req,res) =>{
+const handleSlash = (req,res) =>{
   if(req.url == "/"){
     req.url = '/index'
   }
@@ -127,6 +127,12 @@ const mockUser =function() {
     this.addToDo(1001,{title:"atHome",description:"notDone",1:"go Home",2:"sleep"});
 };
 
+const serveNameOfUser = function(req,res){
+  debugger;
+  res.write(req.user.name);
+  res.end();
+}
+
 let todoApp = new ToDoApp();
 mockUser.call(todoApp);
 
@@ -136,14 +142,15 @@ app.preUse(getUserInReq.bind(todoApp));
 app.preUse(getToDoInReq);
 app.preUse(restrictLoggedOutUser);
 app.preUse(restrictLoggedinUser);
-app.preUse(serveSlash);
+app.preUse(handleSlash);
 app.get("/logout",handleLogout);
-app.get('/getAllToDo',serveToDoTitles.bind(todoApp));
-app.get("/toDo",serveToDo.bind(todoApp));
+app.get('/getAllToDo',serveToDoTitles);
+app.get("/toDo",serveToDo);
+app.get("/userName",serveNameOfUser);
 app.post('/logIn',handleLogIn.bind(todoApp));
-app.post('/newToDo',handleNewToDo.bind(todoApp));
-app.post('/toDo',handleEditedToDo.bind(todoApp));
-app.delete('/toDo',handleDeletingToDo.bind(todoApp));
+app.post('/newToDo',handleNewToDo);
+app.post('/toDo',handleEditedToDo);
+app.delete('/toDo',handleDeletingToDo);
 app.postUse(serveStaticFiles);
 
 module.exports = app;

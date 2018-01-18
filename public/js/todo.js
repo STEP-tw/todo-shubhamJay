@@ -5,7 +5,7 @@ const createListItem = function(ID){
   return element;
 }
 
-const showItems = function(){
+const showToDo = function(){
   let list = document.querySelector("ol");
   data.forEach((item,index)=>{
     let element = createListItem(index);
@@ -110,4 +110,24 @@ const deleteToDo = function(toDoID){
   };
   req.open("DELETE",`/toDo/${toDoID}`);
   req.send();
+}
+
+const displayActiveUser = function(nameOfUser){
+  let userNameBox = document.getElementById('activeUser');
+  userNameBox.innerText += nameOfUser;
+}
+
+const getNameOfUser = function () {
+  let req =new XMLHttpRequest();
+  req.onreadystatechange = function(){
+    if (this.readyState == 4) {
+        displayActiveUser(this.responseText);
+    }
+  }
+  req.open("GET","/userName");
+  req.send();
+}
+const actionOnLoad = function(){
+  getNameOfUser();
+  showToDo()
 }
