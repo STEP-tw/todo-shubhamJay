@@ -1,19 +1,23 @@
+const createListItem = function(ID){
+  let element = document.createElement("li");
+  element.id = `item${ID+1}`;
+  element.name = ID;
+  return element;
+}
+
 const showItems = function(){
   let list = document.querySelector("ol");
-  let element;
   data.forEach((item,index)=>{
-    if(+item.status){
-      element = document.createElement("strike");
-    } else {
-      element = document.createElement("li");
-    }
-    element.id = `item${index+1}`;
-    element.name = index;
+    let element = createListItem(index);
     element.innerText = item.item;
+    if(+item.status){
+      let strike = document.createElement("strike");
+      strike.appendChild(element);
+      element = strike;
+    }
     list.appendChild(element);
   });
 }
-
 
 const editTitle = function(){
   let title = document.getElementById("title");
@@ -31,8 +35,9 @@ const editDescription = function(){
   description.replaceChild(descEditBox,description.childNodes[0]);
 }
 
-const createOption = function(name){
+const createOption = function(name,value){
   let option = document.createElement("option");
+  option.value = value;
   option.innerText = name;
   return option;
 }
@@ -43,29 +48,38 @@ const createTextBox = function(name){
   return itemEditBox;
 }
 
-const getSelectionOptions = function(name){
+const getSelectionOptions = function(ID,status){
   let selectOption = document.createElement("select");
-  selectOption.name = `status${name}`
-  let doneOption = createOption("complete");
-  let notdoneOption = createOption("incomplete");
-  selectOption.appendChild(notdoneOption);
-  selectOption.appendChild(doneOption);
+  selectOption.name = `status${ID}`
+  let doneOption = createOption("complete",1);
+  let notdoneOption = createOption("incomplete",0);
+  if (status) {
+    selectOption.appendChild(doneOption);
+    selectOption.appendChild(notdoneOption);
+  } else {
+    selectOption.appendChild(notdoneOption);
+    selectOption.appendChild(doneOption);
+  }
   return selectOption;
 }
 
+
 const getEditingOptionForItem = function(item,index){
+  let strikeItems = document.querySelectorAll("strike");
+  let status = false;
+  strikeItems.forEach((strikeItem)=>{
+    if (strikeItem.contains(item)) status = true;
+  });
   let itemEditBox = createTextBox(index+1);
-  let selectOption = getSelectionOptions(index+1);
+  let selectOption = getSelectionOptions(index+1,status);
   itemEditBox.innerText = item.innerText;
   item.replaceChild(itemEditBox,item.childNodes[0]);
   item.appendChild(selectOption);
 }
 
 const editItems = function(){
-  let completedItems = document.querySelectorAll("strike");
-  let incompletedItems = document.querySelectorAll("li");
-  incompletedItems.forEach(getEditingOptionForItem);
-  completedItems.forEach(getEditingOptionForItem);
+  let items = document.querySelectorAll("li");
+  items.forEach(getEditingOptionForItem);
 }
 
 const hideEditOption = function(){
