@@ -70,7 +70,7 @@ const handleNewToDo = function(req,res){
 }
 
 const restrictLoggedOutUser = function(req,res){
-  if(!req.urlIsOneOf(['/index','/css/styles.css','/logIn']) && !req.user){
+  if(!req.urlIsOneOf(['/','/index','/css/styles.css','/logIn']) && !req.user){
     res.redirect('/index');
   }
 }

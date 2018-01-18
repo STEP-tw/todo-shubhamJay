@@ -6,18 +6,19 @@ let th = require('./testFrameWork/testHelper.js');
 
 describe('app', () => {
   describe('GET /bad', () => {
-    it('responds with 404', done => {
+    it('responds with 302 if not loggedin', done => {
       request(app, {
         method: 'GET',
         url: '/bad'
       }, (res) => {
-        assert.equal(res.statusCode, 404);
+        th.should_be_redirected_to(res,"/index");
         done();
       })
     })
   })
   describe('GET /', () => {
     it('serves the index for slash', done => {
+
       request(app, {
         method: 'GET',
         url: '/'
@@ -198,14 +199,13 @@ describe('app', () => {
         url: '/toDo/0',
         body: 'title=atWork&description=important',
       }, res => {
-        assert.equal(res.statusCode, 404);
-        th.body_contains(res,'file not found')
+        th.should_be_redirected_to(res,"/index")
         done();
       })
     })
   })
   describe('DELETE /toDo/0', () => {
-    it('should redirect /homePage', done => {
+    it('should give me /homePage in responce body', done => {
       request(app, {
         method: 'DELETE',
         url: '/toDo/0',
@@ -213,7 +213,8 @@ describe('app', () => {
           cookie: 'sessionId=1001',
         },
       }, res => {
-        th.should_be_redirected_to(res, "/homePage");
+        th.body_contains(res,'/homePage');
+        th.status_is_ok(res);
         done();
       })
     })
@@ -222,8 +223,7 @@ describe('app', () => {
         method: 'DELETE',
         url: '/toDo/0',
       }, res => {
-        assert.equal(res.statusCode, 404);
-        th.body_contains(res,'file not found')
+        th.should_be_redirected_to(res,"/index");
         done();
       })
     })
